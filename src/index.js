@@ -9,6 +9,9 @@ import { store } from "./store/store";
 import { createTheme, ThemeProvider, styled } from "@mui/material/styles";
 
 const theme = createTheme({
+  card: {
+    background: "red"
+  },
   typography: {
     fontFamily: `"Roboto", "Helvetica", "Arial", sans-serif`,
     fontSize: 14,
@@ -17,29 +20,34 @@ const theme = createTheme({
     fontWeightMedium: 500,
   },
   palette: {
+    mode: "dark",
     primary: {
-      light: '#181A1B',
-      main: '#181A1B',
-      dark: '#181A1B',
-      contrastText: '#fff',
+      light: "#181A1B",
+      main: "#181A1B",
+      dark: "#181A1B",
+      contrastText: "#fff",
     },
     secondary: {
-      light: '#ff7961',
-      main: '#f44336',
-      dark: '#ba000d',
-      contrastText: '#000',
+      light: "#ff7961",
+      main: "#f44336",
+      dark: "#ba000d",
+      contrastText: "#000",
     },
+    background:{
+      default: "#1F1A28"
+    }
+    
   },
 });
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <ThemeProvider theme={theme}>
-      <Provider store={store}>
+    <Provider store={store}>
+      {/* <ThemeProvider theme={theme}> */}
         <App />
-      </Provider>
-    </ThemeProvider>
+      {/* </ThemeProvider> */}
+    </Provider>
   </React.StrictMode>
 );
 

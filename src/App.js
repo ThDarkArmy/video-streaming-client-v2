@@ -5,14 +5,20 @@ import Home from "./pages/home/Home";
 // import Signup from "./pages/Signup";
 // import Login from "./pages/Login";
 // import VideoPlayerPage from "./pages/VideoPlayerPage";
+import { CssBaseline } from "@mui/material";
+import Player from "./pages/player/Player";
+import Authentication from "./pages/authentication/Authentication";
 
 const App = () => {
   return (
     <div>
-    <Header/>
+      <CssBaseline />
+      {/* <Header /> */}
       <Router>
         <Routes>
           <Route exact path="/" element={<Home />} />
+          <Route exact path="/watch" element={<Player />} />
+          <Route exact path="/authentication" element={<Authentication />} />
           {/* <Route path="/signup" element={<Signup/>} />
           <Route path="/login" element={<Login/>} />
           <Route path={"/watch"} element={<VideoPlayerPage/>} /> */}

@@ -8,7 +8,7 @@ import {
   CardHeader,
   Alert,
   FormControlLabel,
-  Checkbox
+  Checkbox,
 } from "@mui/material";
 import { DarkTextField } from "../../controls/DarkTextField";
 import { useNavigate } from "react-router-dom";
@@ -19,35 +19,35 @@ import {
   darktitlecolor,
 } from "../../colors/colors";
 import { useTheme } from "@mui/material/styles";
-import { signupThunk } from "./Authentication.slice";
+import { loginThunk } from "./Authentication.slice";
 
-const Signup = ({setHaveAccount}) => {
+const ResetPassword = ({ setForgotPassword }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const theme = useTheme();
+
   const [showPassword, setShowPassword] = useState(false);
+
   const [values, setValues] = useState({
-    fullName: "",
     email: "",
     password: "",
   });
 
   const [errors, setErrors] = useState({
-    fullName: "",
     email: "",
     password: "",
   });
 
-  const { signupResponse, signupError, signupStatus } = useSelector(
+  const { loginResponse, loginError, loginStatus } = useSelector(
     (state) => state.authentication
   );
 
   useEffect(() => {
-    if (signupStatus === "success") {
+    if (loginStatus === "success") {
     }
-    if (signupStatus === "failed") {
+    if (loginStatus === "failed") {
     }
-  }, [signupStatus]);
+  }, [loginStatus]);
 
   const handleChange = (e) => {
     const name = e.target.name;
@@ -58,10 +58,6 @@ const Signup = ({setHaveAccount}) => {
   const validate = () => {
     let temp = { ...errors };
 
-    if (values["fullName"].length < 4) {
-      temp.fullName = "Please enter a valid full name";
-    }
-
     if (values["email"].length < 4) {
       temp.email = "Please enter a valid email";
     }
@@ -71,15 +67,15 @@ const Signup = ({setHaveAccount}) => {
     }
 
     setErrors({ ...temp });
-    if (temp.fullName || temp.email || temp.password) return false;
+    if (temp.email || temp.password) return false;
     return true;
   };
 
-  const signup = (e) => {
+  const login = (e) => {
     e.preventDefault();
 
     if (validate()) {
-      dispatch(signupThunk(values));
+      dispatch(loginThunk(values));
     }
   };
 
@@ -105,36 +101,23 @@ const Signup = ({setHaveAccount}) => {
             color="initial"
             sx={{ color: darktitlecolor, fontSize: 25 }}
           >
-            Register on Xzone
+            Reset Password
           </Typography>
         }
       />
 
       <CardContent>
-        <form onSubmit={(e) => signup(e)}>
-          {signupStatus === "success" && (
+        <form onSubmit={(e) => login(e)}>
+          {loginStatus === "success" && (
             <Alert variant="outlined" severity="success">
-              {signupResponse.message}
+              {loginResponse.message}
             </Alert>
           )}
-          {signupStatus === "failed" && (
+          {loginStatus === "failed" && (
             <Alert variant="outlined" severity="error">
-              {signupError.message}
+              {loginError.message}
             </Alert>
           )}
-          <DarkTextField
-            id="fullName"
-            name="fullName"
-            placeholder="Enter Full Name"
-            value={values.fullName}
-            onChange={(e) => handleChange(e)}
-            fullWidth
-            error={Boolean(errors.fullName)}
-            helperText={errors.fullName}
-            size="small"
-            sx={{ mt: 1 }}
-          />
-
           <DarkTextField
             id="email"
             name="email"
@@ -159,10 +142,11 @@ const Signup = ({setHaveAccount}) => {
             error={Boolean(errors.password)}
             helperText={errors.password}
             size="small"
-            type="password"
+            type={showPassword ? "text" : "password"}
             sx={{ mt: 1 }}
           />
-          <FormControlLabel
+          <Box display="flex">
+            <FormControlLabel
               label={
                 <Typography sx={{ fontSize: "10px", color: darktitlecolor }}>Show Password</Typography>
               }
@@ -176,6 +160,13 @@ const Signup = ({setHaveAccount}) => {
                 />
               }
             />
+            <Typography
+            onClick={()=>alert("fuck off")}
+              sx={{ fontSize: "10px", ml: "auto", cursor: "pointer", mt: 1, color: darktitlecolor }}
+            >
+              Forgot Password
+            </Typography>
+          </Box>
           <Button
             type="submit"
             disableRipple
@@ -188,7 +179,7 @@ const Signup = ({setHaveAccount}) => {
               "&:hover": { bgcolor: "red" },
             }}
           >
-            Create Account
+            ResetPassword
           </Button>
           <Box sx={{ mt: 2, paddingLeft: 1 }}>
             <Typography
@@ -205,28 +196,7 @@ const Signup = ({setHaveAccount}) => {
             </Typography>
           </Box>
 
-          <Button
-            fullWidth
-            variant="outlined"
-            onClick={() => setHaveAccount(true)}
-            sx={{
-              mt: 3,
-              bgcolor: "inherit",
-              borderRadius: 50,
-              borderColor: darktitlecolor,
-              border: 1,
-              fontSize: "12px",
-              color: darktitlecolor,
-              "&:hover": {
-                color: "#fff",
-                borderColor: "#fff",
-                fontSize: "12px",
-                border: 1,
-              },
-            }}
-          >
-            Already have an account? Login
-          </Button>
+
         </form>
         <Box display="flex" sx={{ mt: 1 }} alignItems="right">
           <Button
@@ -256,4 +226,4 @@ const Signup = ({setHaveAccount}) => {
   );
 };
 
-export default Signup;
+export default ResetPassword;

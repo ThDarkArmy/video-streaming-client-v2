@@ -18,38 +18,18 @@ import {
   ThumbDownOffAlt,
   ThumbUpOffAlt,
 } from "@mui/icons-material";
+import {timeSince, formatNumberCompact} from "../../utils/utils";
 
 const VideoPlayer = ({ video }) => {
   console.log("Video: ", video);
-  const {
-    category,
-    channel,
-    comments,
-    createdAt,
-    description,
-    dislikes,
-    duration,
-    likes,
-    mimeType,
-    size,
-    subcategories,
-    tags,
-    thumbnailPath,
-    thumbnailStreamingPath,
-    title,
-    updatedAt,
-    videoPath,
-    videoStreamingPath,
-    views,
-    _id,
-  } = video;
+ 
   return (
     <Box>
       <Card raised={true} sx={{ bgcolor: darkbgcolor, boxShadow: "none" }}>
         <CardMedia
           component="video"
-          image={videoStreamingPath}
-          src={videoStreamingPath}
+          image={video?.videoStreamingPath}
+          src={video?.videoStreamingPath}
           // autoPlay
           controls
         />
@@ -65,7 +45,7 @@ const VideoPlayer = ({ video }) => {
               mr: 1,
             }}
           >
-            {title}
+            {video?.title}
           </Typography>
           <Box
             display="flex"
@@ -78,13 +58,13 @@ const VideoPlayer = ({ video }) => {
                   variant="body2"
                   sx={{ color: darktitlecolor, mt: 1 }}
                 >
-                  {views} views {" ."}
+                  {video && formatNumberCompact(video?.views)} views {" ."}
                 </Typography>
                 <Typography
                   variant="body2"
                   sx={{ color: darktitlecolor, ml: 1, mt: 1 }}
                 >
-                  {views} days ago
+                  {video && timeSince(video?.createdAt)}
                 </Typography>
               </Grid>
             <Grid display="flex" item xs={12} sm={6.5} md={6} lg={5} xl={4}>
@@ -95,7 +75,7 @@ const VideoPlayer = ({ video }) => {
                   variant="standard"
                   startIcon={<ThumbUpOffAlt />}
                 >
-                  {likes}
+                  {video && formatNumberCompact(video?.likes)}
                 </Button>
                 <Button
                   sx={{ color: darktitlecolor, ml: "auto" }}
@@ -103,7 +83,7 @@ const VideoPlayer = ({ video }) => {
                   variant="standard"
                   startIcon={<ThumbDownOffAlt />}
                 >
-                  {dislikes}
+                  {video && formatNumberCompact(video?.dislikes)}
                 </Button>
                 <Button
                   sx={{ color: darktitlecolor, ml: "auto" }}
@@ -122,17 +102,17 @@ const VideoPlayer = ({ video }) => {
           <Divider sx={{ bgcolor: "#464949", borderBottomWidth: 0.1, mt: 1 }} />
           <Box sx={{ display: "flex", mt: 1.5, ml: 1, mr: 1 }}>
             <Avatar variant="rounded" sx={{ bgcolor: "#103C8B" }}>
-              {channel?.name.substring(0, 1)}
+              {video?.channel?.name.substring(0, 1)}
             </Avatar>
             <Box display="block" sx={{ ml: 1 }}>
               <Typography variant="body2" sx={{ color: darktitlecolor }}>
-                {channel.name}
+                {video?.channel.name}
               </Typography>
               <Typography
                 variant="body2"
                 sx={{ color: darktitlecolor, fontSize: 11 }}
               >
-                {channel.numberOfSubscribers} Subscribers{" "}
+                {video && formatNumberCompact(video.channel.numberOfSubscribers)} Subscribers{" "}
               </Typography>
             </Box>
             <Button
@@ -148,7 +128,7 @@ const VideoPlayer = ({ video }) => {
               variant="body2"
               sx={{ fontSize: 12, color: darktitlecolor }}
             >
-              {description}
+              {video?.description}
             </Typography>
           </Box>
           <Divider sx={{ bgcolor: "#464949", borderBottomWidth: 0.1, mt: 2 }} />

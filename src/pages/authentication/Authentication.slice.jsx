@@ -2,12 +2,12 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { signup, login } from "./Authentication.api";
 
 const initialState = {
-  signupResponse: {},
-  loginResponse: {},
+  signupResponse: null,
+  loginResponse: null,
   signupStatus: "idle" | "loading" | "success" | "failed",
   loginStatus: "idle" | "loading" | "success" | "failed",
-  signupError: {},
-  loginError: {},
+  signupError: null,
+  loginError: null,
 };
 
 export const signupThunk = createAsyncThunk(
@@ -40,10 +40,17 @@ export const loginThunk = createAsyncThunk(
   }
 );
 
+
+
 export const authenticationSlice = createSlice({
   name: "authentication",
   initialState,
-  reducers: {},
+  reducers: {
+    logout: state=>{
+      state.loginStatus = "idle";
+      state.loginResponse = null;
+    }
+  },
   extraReducers: (builder) => {
     builder
       .addCase(signupThunk.pending, (state) => {
@@ -72,3 +79,4 @@ export const authenticationSlice = createSlice({
 });
 
 export default authenticationSlice.reducer;
+export const { logout } = authenticationSlice.actions

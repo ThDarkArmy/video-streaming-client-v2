@@ -8,7 +8,6 @@ import {
   IconButton,
   Typography,
   Badge,
-  TextField,
   Button,
   Divider,
   List,
@@ -16,7 +15,9 @@ import {
   ListItemText,
   Drawer,
   Avatar,
-  useMediaQuery
+  useMediaQuery,
+  Menu,
+  MenuItem
 } from "@mui/material";
 
 import Title1 from "../assets/logo/title1.png";
@@ -24,7 +25,6 @@ import Title2 from "../assets/logo/title2.png";
 import Title3 from "../assets/logo/title3.png";
 import Title4 from "../assets/logo/title4.png";
 import MenuIcon from "@mui/icons-material/Menu";
-import AccountCircle from "@mui/icons-material/AccountCircle";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import AddVideoIcon from "@mui/icons-material/VideoCall";
 import { styled, useTheme } from "@mui/material/styles";
@@ -49,6 +49,8 @@ import HelpIcon from "@mui/icons-material/Help";
 import FeedbackIcon from "@mui/icons-material/Feedback";
 import Search from "./Search";
 import { darkbgcolor } from "../colors/colors";
+import { logout } from "../pages/authentication/Authentication.slice";
+import { useDispatch } from "react-redux";
 
 const DrawerHeader = styled("div")(({ theme }) => ({
   display: "flex",
@@ -61,41 +63,34 @@ const DrawerHeader = styled("div")(({ theme }) => ({
 }));
 
 export default function Header() {
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
   const isMobile = useMediaQuery("(max-width:800px)");
-  const [anchorEl, setAnchorEl] = useState(null);
-  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
-  const [value, setValue] = useState(null);
   const [open, setOpen] = useState(false);
   const theme = useTheme();
 
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
-
-  const isMenuOpen = Boolean(anchorEl);
-  const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
-
-  const handleProfileMenuOpen = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleMobileMenuClose = () => {
-    setMobileMoreAnchorEl(null);
-  };
-
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-    handleMobileMenuClose();
-  };
-
-  const handleMobileMenuOpen = (event) => {
-    setMobileMoreAnchorEl(event.currentTarget);
-  };
+  const [profileAnchorEl, setProfileAnchorEl] = useState(null);
+  const dispatch = useDispatch();
 
   const handleDrawerClose = () => {
     setOpen(!open);
   };
 
-  const imageClick = () => {};
+  const handleProfileMenuClick = (event) => {
+    setProfileAnchorEl(event.currentTarget);
+  };
+  const handleProfileMenuClose = () => {
+    setProfileAnchorEl(null);
+  };
+
+  const logoutUser = () => {
+    dispatch(logout());
+    localStorage.clear();
+    handleProfileMenuClose();
+  }
+
+  const createChannel = () => {
+
+  }
 
   return (
     <Box sx={{ display: "flex" }}>
@@ -117,7 +112,7 @@ export default function Header() {
           </IconButton>
 
           <Box
-            // onClick={() => navigate("/")}
+            onClick={() => navigate("/")}
             component="img"
             src={Title1}
             sx={{
@@ -127,14 +122,12 @@ export default function Header() {
             }}
             alt="DARKARMY"
           />
-          
-
           {isMobile && <Box sx={{ flexGrow: 1 }} />}
           <Box sx={{ml: "10vw"}}>
             <Search />
           </Box>
           {!isMobile && <Box sx={{ flexGrow: 1 }} />}
-          {isLoggedIn ? (
+          {localStorage.getItem("JWT_TOKEN") ? (
             <Box sx={{ display: { xs: "flex", md: "flex" } }}>
               <IconButton size="large" aria-label="add-video">
                 <AddVideoIcon style={{ color: "#fff" }} />
@@ -150,25 +143,45 @@ export default function Header() {
                 aria-label="account of current user"
                 aria-controls={"menuId"}
                 aria-haspopup="true"
-                onClick={handleProfileMenuOpen}
+                onClick={handleProfileMenuClick}
               >
                 <Avatar
-                  variant="rounded"
+                  variant="circle"
                   sx={{
                     bgcolor: "#403C48",
                     color: "#fff",
                     fontSize: 15,
-                    height: 25,
-                    width: 25,
+                    height: 30,
+                    width: 30,
                   }}
                 >
-                  D
+                  {localStorage.getItem("FULL_NAME")?.substring(0,1)}
                 </Avatar>
               </IconButton>
+              <Menu
+            id="basic-menu"
+            anchorEl={profileAnchorEl}
+            open={Boolean(profileAnchorEl)}
+            onClose={handleProfileMenuClose}
+            MenuListProps={{
+              "aria-labelledby": "basic-button",
+            }}
+          >
+            <MenuItem onClick={()=>{
+              if(localStorage.getItem("CHANNEL")){
+               return navigate(`/channel/${localStorage.getItem("CHANNEL")}`)
+              }else{
+                createChannel();
+              }
+            }}>{localStorage.getItem("CHANNEL") ? "Channel" : "Create Channel"}</MenuItem>
+            <MenuItem onClick={handleProfileMenuClose}>Profile</MenuItem>
+            <MenuItem onClick={()=> logoutUser()}>Logout</MenuItem>
+          </Menu>
             </Box>
           ) : (
             <Button
               variant="contained"
+              onClick={()=> navigate("/authentication")}
               style={{
                 color: "white",
                 background: "#403C48",
@@ -325,6 +338,3 @@ export default function Header() {
     </Box>
   );
 }
-
-
-

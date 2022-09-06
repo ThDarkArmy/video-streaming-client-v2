@@ -12,3 +12,8 @@ export const login = async (loginData) => {
     const { data } = await axios.post(`${BASE_URL}auth/login`, loginData);
     return data;
 }
+
+export const resetPassword = async (resetPasswordData) => {
+    const { data } = await axios.post(`${BASE_URL}auth/reset-password`, resetPasswordData);
+    return data;
+}

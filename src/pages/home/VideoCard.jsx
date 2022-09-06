@@ -1,4 +1,4 @@
-import React from "react";
+import { useState, useRef } from "react";
 import {
   Card,
   CardMedia,
@@ -9,6 +9,7 @@ import {
   Box,
   Menu,
   MenuItem,
+  Skeleton,
 } from "@mui/material";
 import { MoreVert as MoreVertIcon } from "@mui/icons-material";
 import {
@@ -17,8 +18,16 @@ import {
   darkchannelnamecolor,
 } from "../../colors/colors";
 
+const VideoCard = ({ videoData, inChannel }) => {
+  const [loading, setLoading] = useState(true);
 
-const VideoCard = ({ videoData }) => {
+  const counter = useRef(0);
+  const imageLoaded = () => {
+    counter.current += 1;
+    if (counter.current >= 1) {
+      setLoading(false);
+    }
+  }
   let {
     _id,
     channel,
@@ -29,8 +38,7 @@ const VideoCard = ({ videoData }) => {
     videoStreamingPath,
   } = videoData;
 
-  console.log(videoData);
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -39,7 +47,7 @@ const VideoCard = ({ videoData }) => {
     setAnchorEl(null);
   };
   return (
-    <Card sx={{ maxWidth: 550, paddingRight: 0.4, bgcolor: darkbgcolor }}>
+    <Card sx={{minWidth: 230, maxWidth: 550, paddingRight: 0.4, bgcolor: darkbgcolor, transition: 'transform 200ms', '&:hover':{transform: 'scale(1.03)'} }}>
       <a style={{ textDecoration: "none" }} href={"/watch?video=" + _id}>
         <CardMedia
           component="img"
@@ -49,9 +57,18 @@ const VideoCard = ({ videoData }) => {
           sx={{
             paddingBottom: 0,
             mb: 0,
+            opacity: loading ? 0 : 1
           }}
           autoPlay
+          onLoad={() => imageLoaded()}
         />
+        {loading && (
+          <Skeleton
+            sx={{ height: 190 }}
+            animation="wave"
+            variant="rectangular"
+          />
+        )}
       </a>
       <CardContent sx={{ paddingTop: 1.5, paddingLeft: 0.3, paddingRight: 0 }}>
         <Box display="flex">
@@ -67,7 +84,6 @@ const VideoCard = ({ videoData }) => {
                 WebkitLineClamp: "2",
                 WebkitBoxOrient: "vertical",
                 fontFamily: `"bello-pro-1", "bello-pro-2", sans-serif`,
-                "&:hover": { fontSize: 13.1 },
               }}
               style={{ color: darktitlecolor }}
             >
@@ -98,20 +114,20 @@ const VideoCard = ({ videoData }) => {
           </Menu>
         </Box>
         <Box display="flex" sx={{ mt: 2 }}>
-          <a
+          {!inChannel && <a
             style={{ textDecoration: "none" }}
             href={"/channels?channel=" + channel?._id}
           >
             <Avatar
               src={thumbnailStreamingPath}
               variant="rounded"
-              sx={{ height: 33, width: 33, mt: 0.5, bgcolor: "#6495ED" }}
+              sx={{ height: 33, width: 33, mt: 0.5, bgcolor: "#6495ED", mr:2 }}
             >
               {channel?.name.substring(0, 1)}
             </Avatar>
-          </a>
-          <Box component="div" sx={{ ml: 2 }}>
-            <Box>
+          </a>}
+          <Box component="div" sx={{  }}>
+            {!inChannel && <Box>
               <a
                 style={{ textDecoration: "none" }}
                 href={"/channels?channel=" + channel?._id}
@@ -142,7 +158,7 @@ const VideoCard = ({ videoData }) => {
                   {channel?.name}
                 </Typography>
               </a>
-            </Box>
+            </Box>}
 
             <Box display="flex" sx={{ width: "100%" }}>
               <Typography

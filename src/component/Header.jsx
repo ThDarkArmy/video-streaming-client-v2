@@ -51,6 +51,7 @@ import Search from "./Search";
 import { darkbgcolor } from "../colors/colors";
 import { logout } from "../pages/authentication/Authentication.slice";
 import { useDispatch } from "react-redux";
+import CreateEditChannel from "../pages/channel/CreateEditChannel";
 
 const DrawerHeader = styled("div")(({ theme }) => ({
   display: "flex",
@@ -67,7 +68,7 @@ export default function Header() {
   const isMobile = useMediaQuery("(max-width:800px)");
   const [open, setOpen] = useState(false);
   const theme = useTheme();
-
+  const [openFormDialog, setOpenFormDialog] = useState(false);
   const [profileAnchorEl, setProfileAnchorEl] = useState(null);
   const dispatch = useDispatch();
 
@@ -91,6 +92,11 @@ export default function Header() {
   const createChannel = () => {
 
   }
+
+  const handleCloseFormDialog = () => {
+    setOpenFormDialog(false);
+  }
+
 
   return (
     <Box sx={{ display: "flex" }}>
@@ -264,6 +270,24 @@ export default function Header() {
           </List>
           <Divider />
           <List>
+            {["Profile", "Channel", "Logout"].map((text, index) => (
+              <ListItem onClick={()=> {
+                if(text==="Channel"){
+                  alert("alert")
+                  setOpenFormDialog(true);
+                }
+              }} button key={text}>
+                <ListItemIcon>
+                  {index === 0 && <HomeIcon sx={{ color: "#fff" }} />}
+                  {index === 1 && <ExploreIcon sx={{ color: "#fff" }} />}
+                  {index === 2 && <SubscriptionsIcon sx={{ color: "#fff" }} />}
+                </ListItemIcon>
+                <ListItemText primary={text} />
+              </ListItem>
+            ))}
+          </List>
+          <Divider />
+          <List>
             {["Library", "History"].map((text, index) => (
               <ListItem button key={text}>
                 <ListItemIcon>
@@ -335,6 +359,7 @@ export default function Header() {
         </Box>
         <Divider />
       </Drawer>
+      <CreateEditChannel openFormDialog = { openFormDialog } handleCloseFormDialog={handleCloseFormDialog}/>
     </Box>
   );
 }

@@ -8,15 +8,15 @@ const initialState = {
     updateChannelStatus: "idle" | "loading" | "success" | "failed",
     deleteChannelStatus: "idle" | "loading" | "success" | "failed",
     channelVideosStatus: "idle" | "loading" | "success" | "failed",
-    getChannelResponse: null,
+    channel: null,
     createChannelResponse: null,
     updateChannelResponse: null,
     deleteChannelResponse: null,
     channelVideos: null,
-    getChannelError: null,
-    createChannelError: null,
-    updateChannelError: null,
-    deleteChannelError: null,
+    getChannelError: "",
+    createChannelError: "",
+    updateChannelError: "",
+    deleteChannelError: "",
     channelVideosError: "",
 }
 
@@ -45,41 +45,41 @@ export const getChannelVideosThunk = createAsyncThunk("channels/getChannelVideos
     }
 })
 
-export const getMyChannelThunk = createAsyncThunk("channels/getMyChannel", async ({ rejectWithValue })=> {
+export const getMyChannelThunk = createAsyncThunk("channels/getMyChannel", async ()=> {
     try{
         return await getMyChannel();
     }catch(error){
-        if (error.toJSON().message === "Network Error") {
-            return rejectWithValue( error.toJSON());
-          } else {
-            return rejectWithValue(error.response.data);
-          }
+        if(error.response){
+            throw error.response.data;
+        }else{
+            throw error;
+        }
     }
 })
 
 
-export const createChannelThunk = createAsyncThunk("channels/createChannel", async (channelData, { rejectWithValue })=> {
+export const createChannelThunk = createAsyncThunk("channels/createChannel", async (channelData)=> {
     try{
         return await createChannel(channelData);
     }catch(error){
-        if (error.toJSON().message === "Network Error") {
-            return rejectWithValue( error.toJSON());
-          } else {
-            return rejectWithValue(error.response.data);
-          }
+        if(error.response){
+            throw error.response.data;
+        }else{
+            throw error;
+        }
     }
 })
 
 
-export const updateChannelThunk = createAsyncThunk("channels/updateChannel", async (channelData, { rejectWithValue })=> {
+export const updateChannelThunk = createAsyncThunk("channels/updateChannel", async (channelData)=> {
     try{
         return await updateChannel(channelData);
     }catch(error){
-        if (error.toJSON().message === "Network Error") {
-            return rejectWithValue( error.toJSON());
-          } else {
-            return rejectWithValue(error.response.data);
-          }
+        if(error.response){
+            throw error.response.data;
+        }else{
+            throw error;
+        }
     }
 })
 
@@ -106,11 +106,11 @@ export const channelSlice = createSlice({
         })
         .addCase(getChannelThunk.fulfilled, (state, action)=> {
             state.getChannelStatus="success";
-            state.getChannelResponse=action.payload.body;
+            state.channel=action.payload.body;
         })
         .addCase(getChannelThunk.rejected, (state, action)=> {
             state.getChannelStatus="failed";
-            state.getChannelError = action.payload;
+            state.getChannelError = action.error.message;
         })
         .addCase(getChannelVideosThunk.pending, state=>{
             state.channelVideosStatus = "loading";
@@ -120,8 +120,19 @@ export const channelSlice = createSlice({
             state.channelVideos = action.payload.body;
         })
         .addCase(getChannelVideosThunk.rejected, (state, action) => {
-            state.channelVideosStatus = "failed";
+            state.update = "failed";
             state.channelVideosError = action.error.message;
+        })
+        .addCase(updateChannelThunk.pending, state=>{
+            state.updateChannelStatus = "loading";
+        })
+        .addCase(updateChannelThunk.fulfilled, (state, action) => {
+            state.updateChannelStatus = "success";
+            state.channel = action.payload.body;
+        })
+        .addCase(updateChannelThunk.rejected, (state, action) => {
+            state.updateChannelStatus = "failed";
+            state.updateChannelError = action.error.message;
         })
     }
 })

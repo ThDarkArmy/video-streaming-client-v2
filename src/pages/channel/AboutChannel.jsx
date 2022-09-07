@@ -2,7 +2,7 @@ import React from "react";
 import { Box, Divider, Grid, Link, Typography } from "@mui/material";
 import { darkchannelnamecolor, darktitlecolor } from "../../colors/colors";
 import { useTheme } from "@mui/material/styles";
-import { formatDate, formatNumber, formatNumberCompact } from "../../utils/utils";
+import { formatDate, formatNumber } from "../../utils/utils";
 
 const AboutChannel = ({ channel }) => {
     const theme = useTheme();
@@ -26,21 +26,7 @@ const AboutChannel = ({ channel }) => {
                 sx={{ mt: 2 }}
                 style={{ color: darktitlecolor }}
               >
-                I've ridden 100.000 kilometers solo around the world and still
-                counting! My name is Noraly, I'm Dutch and passionate about
-                motorcycles, traveling and adventuring. In 2018, I quit my job,
-                sold my belongings and have been traveling the world fulltime by
-                motorcycle since then. Right now, I am picking up my journey
-                towards Alaska from when I started it in the South of Argentina,
-                in Patagonia. My loyal companion is named Alaska, and she is a
-                Honda CRF300L Rally, carrying me all the way to Alaska! I share
-                my adventures here on YouTube every Monday, Wednesday and
-                Friday!
-                <br />
-                <br />
-                Welcome to the channel and I hope you'll enjoy the ride!
-                <br />
-                <br /> LET'S GO!
+                {channel?.description}
               </Typography>
             </Box>
             <Box sx={{ mt: 5 }}>

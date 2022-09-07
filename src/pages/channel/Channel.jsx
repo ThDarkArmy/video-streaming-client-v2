@@ -52,7 +52,7 @@ const Channel = () => {
   const dispatch = useDispatch();
 
   const {
-    getChannelResponse,
+    channel,
     getChannelStatus,
     channelVideos,
     channelVideosStatus,
@@ -75,7 +75,7 @@ const Channel = () => {
 
   useEffect(() => {
     if (getChannelStatus == "success") {
-      console.log(getChannelResponse);
+      console.log(channel);
     }
   }, [getChannelStatus]);
 
@@ -133,7 +133,7 @@ const Channel = () => {
                 }}
                 src="https://cdn.pixabay.com/photo/2016/05/05/02/37/sunset-1373171__480.jpg"
               >
-                {getChannelResponse?.name.substring(0, 1)}
+                {channel?.name.substring(0, 1)}
               </Avatar>
               <Box display="block" sx={{ ml: 0 }}>
                 <Typography
@@ -146,7 +146,7 @@ const Channel = () => {
                     [theme.breakpoints.down("sm")]: { fontSize: 15 },
                   }}
                 >
-                  {getChannelResponse?.name}
+                  {channel?.name}
                 </Typography>
                 <Typography
                   variant="body1"
@@ -158,7 +158,7 @@ const Channel = () => {
                     [theme.breakpoints.down("sm")]: { fontSize: 8 },
                   }}
                 >
-                  {getChannelResponse?.numberOfSubscribers} Subscribers
+                  {channel?.numberOfSubscribers} Subscribers
                 </Typography>
               </Box>
               <Button
@@ -218,7 +218,9 @@ const Channel = () => {
                 />
               </Tabs>
 
-              <Button onClick={()=> setOpenFormDialog(true)} disableRipple variant="outlined" color="primary" sx={{ml: "auto",  height:30, [theme.breakpoints.down("sm")]: {height:20, fontSize:8 }}}>
+              <Button onClick={()=>{
+                  setEditChannelData(channel);
+                 setOpenFormDialog(true) }} disableRipple variant="outlined" color="primary" sx={{ml: "auto",  height:30, [theme.breakpoints.down("sm")]: {height:20, fontSize:8 }}}>
                 Edit
               </Button>
             </Box>
@@ -267,7 +269,7 @@ const Channel = () => {
                 </Box>
                 <Grid container spacing={2} alignContent="center">
                   {getChannelStatus === "success" &&
-                    getChannelResponse.videos.map((video) => (
+                    channel?.videos.map((video) => (
                       <Grid
                         item
                         key={video._id}
@@ -283,7 +285,7 @@ const Channel = () => {
                 </Grid>
               </TabPanel>
               <TabPanel value={value} index={3}>
-                <AboutChannel channel={getChannelResponse}/>
+                <AboutChannel channel={channel}/>
               </TabPanel>
             </Box>
           </Box>

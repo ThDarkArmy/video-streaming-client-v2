@@ -1,4 +1,4 @@
-import {useState, forwardRef} from "react";
+import { useState, forwardRef, useEffect } from "react";
 import {
   Box,
   Dialog,
@@ -22,6 +22,8 @@ import {
   darktitlecolor,
 } from "../../colors/colors";
 import { styled } from "@mui/material/styles";
+import { updateChannelThunk } from "./Channel.slice";
+import { useDispatch, useSelector} from "react-redux";
 
 const Transition = forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -53,20 +55,51 @@ const CreateEditChannel = ({
 }) => {
   const theme = useTheme();
   const mobile = useMediaQuery(theme.breakpoints.down("sm"));
-  let link ={
+  const dispatch = useDispatch();
+  let link = {
     title: "",
-    url: ""
-  }
+    url: "",
+  };
 
   const [links, setLinks] = useState([link]);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [location, setLocation] = useState("");
+  const [description, setDescription] = useState("");
 
-  const handleAddMoreLink = ()=>{
+  useEffect(() => {
+    if (editChannelData) {
+      const { name, email, location, description } = editChannelData;
+      setName(name);
+      setEmail(email);
+      setDescription(description);
+      setLocation(location);
+    }
+  }, [editChannelData]);
+
+  const handleAddMoreLink = () => {
     setLinks([...links, link]);
-  }
+  };
 
   const handleOnSubmit = (event) => {
     event.preventDefault();
-    console.log(event.target[0].value)
+    console.log(event.target[0].value);
+  };
+
+  const updateChannel = () => {
+    const channelData = {
+      name,
+      email,
+      location,
+      description,
+    };
+
+    dispatch(updateChannelThunk(channelData));
+    handleCloseFormDialog();
+  };
+
+  const createChannel = () => {
+    
   }
 
   return (
@@ -104,7 +137,6 @@ const CreateEditChannel = ({
         )}
 
         <DialogContent sx={{ bgcolor: darkbgcolor }} component="div">
-          <form onSubmit={(event)=>handleOnSubmit(event)}>
           <DarkTextField
             id="name"
             name="name"
@@ -112,6 +144,8 @@ const CreateEditChannel = ({
             fullWidth
             size="small"
             type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
           />
           <DarkTextField
             margin="dense"
@@ -120,6 +154,8 @@ const CreateEditChannel = ({
             type="email"
             fullWidth
             size="small"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
           />
           <DarkTextField
             margin="dense"
@@ -128,6 +164,8 @@ const CreateEditChannel = ({
             type="text"
             fullWidth
             size="small"
+            value={location}
+            onChange={(e) => setLocation(e.target.value)}
           />
           <DarkTextField
             margin="dense"
@@ -138,41 +176,61 @@ const CreateEditChannel = ({
             multiline={true}
             minRows={5}
             size="small"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
             InputProps={{ style: { color: darktitlecolor } }}
           />
-          <Typography variant="body2" component="div" style={{color: darktitlecolor, mt: 1}}>Add Links</Typography>
+          {!editChannelData && (
+            <>
+              <Typography
+                variant="body2"
+                component="div"
+                style={{ color: darktitlecolor, mt: 1 }}
+              >
+                Add Links
+              </Typography>
 
-          {links.map(link =><>
-            <DarkTextField
-            margin="dense"
-            id="title"
-            placeholder="Enter title"
-            type="text"
-            fullWidth
-            size="small"
-          />
-          <DarkTextField
-            margin="dense"
-            id="url"
-            placeholder="Enter url"
-            type="url"
-            fullWidth
-            size="small"
-          />
+              <DarkTextField
+                margin="dense"
+                id="title"
+                placeholder="Enter title"
+                type="text"
+                fullWidth
+                size="small"
+              />
+              <DarkTextField
+                margin="dense"
+                id="url"
+                placeholder="Enter url"
+                type="url"
+                fullWidth
+                size="small"
+              />
 
-          <Button type="submit" onClick={()=>handleAddMoreLink()} variant="text" color="primary" sx={{ml: "auto", fontSize:11, float:"right"}}>
-            Add More
-          </Button>
-          </> )}
-          </form>
+              <Button
+                type="submit"
+                onClick={() => handleAddMoreLink()}
+                variant="text"
+                color="primary"
+                sx={{ ml: "auto", fontSize: 11, float: "right" }}
+              >
+                Add More
+              </Button>
+            </>
+          )}
         </DialogContent>
         <DialogActions sx={{ bgcolor: darkbgcolor }}>
-          <Button onClick={()=> {
-            setLinks([link]);
-            handleCloseFormDialog()}}>Cancel</Button>
-          <Button type="submit" onClick={()=> {
-             setLinks([link]);
-            handleCloseFormDialog()}}>
+          <Button
+            onClick={() => {
+              setLinks([link]);
+              handleCloseFormDialog();
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={() => editChannelData? updateChannel() : createChannel()}
+          >
             {editChannelData ? "Update Channel" : "Create Channel"}
           </Button>
         </DialogActions>

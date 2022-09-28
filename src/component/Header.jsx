@@ -21,9 +21,6 @@ import {
 } from "@mui/material";
 
 import Title1 from "../assets/logo/title1.png";
-import Title2 from "../assets/logo/title2.png";
-import Title3 from "../assets/logo/title3.png";
-import Title4 from "../assets/logo/title4.png";
 import MenuIcon from "@mui/icons-material/Menu";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import AddVideoIcon from "@mui/icons-material/VideoCall";
@@ -52,6 +49,7 @@ import { darkbgcolor } from "../colors/colors";
 import { logout } from "../pages/authentication/Authentication.slice";
 import { useDispatch } from "react-redux";
 import CreateEditChannel from "../pages/channel/CreateEditChannel";
+import CreateEditVideo from "../pages/video/CreateEditVideo";
 
 const DrawerHeader = styled("div")(({ theme }) => ({
   display: "flex",
@@ -59,8 +57,6 @@ const DrawerHeader = styled("div")(({ theme }) => ({
   justifyContent: "flex-end",
   padding: theme.spacing(0, 1),
   marginTop: 50,
-  // necessary for content to be below app bar
-  // ...theme.mixins.toolbar,
 }));
 
 export default function Header() {
@@ -69,6 +65,7 @@ export default function Header() {
   const [open, setOpen] = useState(false);
   const theme = useTheme();
   const [openFormDialog, setOpenFormDialog] = useState(false);
+  const [openVideoFormDialog, setOpenVideoFormDialog] = useState(false);
   const [profileAnchorEl, setProfileAnchorEl] = useState(null);
   const dispatch = useDispatch();
 
@@ -95,6 +92,10 @@ export default function Header() {
 
   const handleCloseFormDialog = () => {
     setOpenFormDialog(false);
+  }
+
+  const handleCloseVideoFormDialog = () => {
+    setOpenVideoFormDialog(false);
   }
 
 
@@ -135,10 +136,10 @@ export default function Header() {
           {!isMobile && <Box sx={{ flexGrow: 1 }} />}
           {localStorage.getItem("JWT_TOKEN") ? (
             <Box sx={{ display: { xs: "flex", md: "flex" } }}>
-              <IconButton size="large" aria-label="add-video">
+              <IconButton onClick={()=> setOpenVideoFormDialog(true)} size="large" aria-label="add-video" title="Add Video">
                 <AddVideoIcon style={{ color: "#fff" }} />
               </IconButton>
-              <IconButton size="large" aria-label="notifications">
+              <IconButton size="large" aria-label="notifications" title="Notifications">
                 <Badge badgeContent={0} color="error">
                   <NotificationsIcon style={{ color: "#fff" }} />
                 </Badge>
@@ -234,7 +235,7 @@ export default function Header() {
             <MenuIcon style={{ color: "#fff" }} />
           </IconButton>
           <Box
-            // onClick={() => navigate("/")}
+            onClick={() => navigate("/")}
             component="img"
             src={Title1}
             sx={{
@@ -273,8 +274,12 @@ export default function Header() {
             {["Profile", "Channel", "Logout"].map((text, index) => (
               <ListItem onClick={()=> {
                 if(text==="Channel"){
-                  alert("alert")
-                  setOpenFormDialog(true);
+                  if(localStorage.getItem("CHANNEL")){
+                    navigate(`/channel/${localStorage.getItem("CHANNEL")}`);
+                  }else{
+                    setOpenFormDialog(true);
+                  }
+                  
                 }
               }} button key={text}>
                 <ListItemIcon>
@@ -360,6 +365,7 @@ export default function Header() {
         <Divider />
       </Drawer>
       <CreateEditChannel openFormDialog = { openFormDialog } handleCloseFormDialog={handleCloseFormDialog}/>
+      <CreateEditVideo openVideoFormDialog={openVideoFormDialog} handleCloseVideoFormDialog={handleCloseVideoFormDialog}/>
     </Box>
   );
 }

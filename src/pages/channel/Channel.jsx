@@ -8,6 +8,7 @@ import {
   Button,
   Tabs,
   Tab,
+  IconButton
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import Sidebar from "../../component/Sidebar";
@@ -21,8 +22,9 @@ import VideoCard from "../home/VideoCard";
 import PlaylistCard from "./PlaylistCard";
 import AboutChannel from "./AboutChannel";
 import { useParams } from "react-router-dom";
-import { getChannelThunk, getChannelVideosThunk } from "./Channel.slice";
+import { getChannelThunk, getChannelVideosThunk, getAllPlaylistByChannelThunk } from "./Channel.slice";
 import CreateEditChannel from "./CreateEditChannel";
+import PlaylistCreateIcon from '@mui/icons-material/PlaylistAdd';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -56,11 +58,15 @@ const Channel = () => {
     getChannelStatus,
     channelVideos,
     channelVideosStatus,
+    playlists,
+    getAllPlaylistStatus,
   } = useSelector((state) => state.channel);
 
   useEffect(() => {
-    // dispatch(getChannelThunk(channelId));
-    loadChannel(channelId, channelVideosCallback);
+    dispatch(getChannelThunk(channelId));
+    dispatch(getAllPlaylistByChannelThunk(channelId));
+    dispatch(getChannelVideosThunk(channelId))
+    // loadChannel(channelId, channelVideosCallback);
   }, [dispatch]);
 
   // useEffect(() => {
@@ -75,9 +81,9 @@ const Channel = () => {
 
   useEffect(() => {
     if (getChannelStatus == "success") {
-      console.log(channel);
+      // console.log(channel);
     }
-  }, [getChannelStatus]);
+  }, [getChannelStatus, getAllPlaylistStatus]);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -91,6 +97,10 @@ const Channel = () => {
   const channelVideosCallback = (channelId) => {
     dispatch(getChannelVideosThunk(channelId))
   }
+
+  // const getAllPlaylistByChannel = (channelId) => {
+  //   dispatch(getAllPlaylistByChannelThunk(channelId));
+  // }
 
   const handleCloseFormDialog = () => {
     setOpenFormDialog(false);
@@ -226,9 +236,10 @@ const Channel = () => {
             </Box>
             <Box sx={{ display: "flex", mt: 2 }}>
               <TabPanel value={value} index={0}>
-                {channelVideosStatus === "success" && (
-                  <Playlist inChannel={true} videos={channelVideos} />
-                )}
+                {getAllPlaylistStatus === "success" && (
+                  playlists.map(playlist =>
+                  <Playlist playlist={playlist} />
+                  ))}
               </TabPanel>
               <TabPanel value={value} index={1}>
                 <Box sx={{ ml: 1, mb: 1 }}>
@@ -258,7 +269,7 @@ const Channel = () => {
                 </Grid>
               </TabPanel>
               <TabPanel value={value} index={2}>
-                <Box sx={{ ml: 1, mb: 1 }}>
+                <Box display="flex" alignItems="center" sx={{ ml: 1, mb: 1 }}>
                   <Typography
                     variant="body1"
                     color="initial"
@@ -266,20 +277,23 @@ const Channel = () => {
                   >
                     Created Playlists
                   </Typography>
+                  <IconButton sx={{ml: 7, [theme.breakpoints.down("sm")]: {ml: "auto"}}} title="Create Playlist" aria-label="" onClick={()=> {}}>
+                    <PlaylistCreateIcon sx={{color: darktitlecolor}}/>
+                  </IconButton>
                 </Box>
                 <Grid container spacing={2} alignContent="center">
-                  {getChannelStatus === "success" &&
-                    channel?.videos.map((video) => (
+                  {getAllPlaylistStatus === "success" &&
+                    playlists?.map((playlist) => (
                       <Grid
                         item
-                        key={video._id}
+                        key={playlist._id}
                         xs={12}
                         sm={6}
                         md={3}
                         lg={3}
                         xl={2}
                       >
-                        <PlaylistCard  key={video._id} videoData={video} />
+                        <PlaylistCard  key={playlist._id} playlist={playlist} />
                       </Grid>
                     ))}
                 </Grid>

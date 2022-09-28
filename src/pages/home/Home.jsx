@@ -10,7 +10,7 @@ import { darkbgcolor } from "../../colors/colors";
 
 const Home = () => {
   const dispatch = useDispatch();
-  const { videoStatus, videos } = useSelector((state) => state.video);
+  const { videoStatus, videos } = useSelector((state) => state.homeVideo);
   
   useEffect(() => {
     dispatch(loadAllVideosThunk());

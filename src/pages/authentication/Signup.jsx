@@ -67,7 +67,7 @@ const Signup = ({setHaveAccount}) => {
     }
 
     if (values["password"].length < 8) {
-      temp.password = "Please enter a valid password";
+      temp.password = "Password must be atleast 8 characters long";
     }
 
     setErrors({ ...temp });

@@ -2,23 +2,18 @@ import { useState, useRef } from "react";
 import {
   Card,
   CardMedia,
-  IconButton,
   CardContent,
   Typography,
-  Avatar,
   Box,
-  Menu,
-  MenuItem,
-  Skeleton,
+  Skeleton
 } from "@mui/material";
-import { MoreVert as MoreVertIcon } from "@mui/icons-material";
 import {
   darkbgcolor,
   darktitlecolor,
-  darkchannelnamecolor,
 } from "../../colors/colors";
 
-const PlaylistCard = ({ videoData }) => {
+
+const PlaylistCard = ({ playlist }) => {
   const [loading, setLoading] = useState(true);
 
   const counter = useRef(0);
@@ -28,15 +23,6 @@ const PlaylistCard = ({ videoData }) => {
       setLoading(false);
     }
   }
-  let {
-    _id,
-    channel,
-    description,
-    title,
-    views,
-    thumbnailStreamingPath,
-    videoStreamingPath,
-  } = videoData;
 
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
@@ -48,11 +34,11 @@ const PlaylistCard = ({ videoData }) => {
   };
   return (
     <Card sx={{minWidth: 230, maxWidth: 550, paddingRight: 0.4, bgcolor: darkbgcolor, transition: 'transform 200ms', '&:hover':{transform: 'scale(1.03)'} }}>
-      <a style={{ textDecoration: "none" }} href={"/watch?video=" + _id}>
+      <a style={{ textDecoration: "none" }} href={"/watch?video="}>
         <CardMedia
           component="img"
-          image={thumbnailStreamingPath}
-          title={title}
+          image={playlist?.videos[0].thumbnailStreamingPath}
+          title={playlist?.name}
           sx={{
             paddingBottom: 0,
             mb: 0,
@@ -70,7 +56,7 @@ const PlaylistCard = ({ videoData }) => {
       </a>
       <CardContent sx={{ paddingTop: 1.5, paddingLeft: 0.3, paddingRight: 0 }}>
         <Box display="flex">
-          <a style={{ textDecoration: "none" }} href={"/watch?video=" + _id}>
+          <a style={{ textDecoration: "none" }} href={"/watch?video="}>
             <Typography
               variant="body1"
               sx={{
@@ -85,7 +71,7 @@ const PlaylistCard = ({ videoData }) => {
               }}
               style={{ color: darktitlecolor }}
             >
-              {title}
+              {playlist?.name}
             </Typography>
           </a>
         </Box>

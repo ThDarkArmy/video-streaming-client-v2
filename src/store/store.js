@@ -1,15 +1,17 @@
 import { configureStore } from "@reduxjs/toolkit";
-import videoReducer from "../pages/home/Home.slice";
+import homeVideoReducer from "../pages/home/Home.slice";
 import playerReducer from "../pages/player/Player.slice";
 import authenticationReducer from "../pages/authentication/Authentication.slice";
-import channelReducer from "../pages/channel/Channel.slice"
+import channelReducer from "../pages/channel/Channel.slice";
+import videoReducer from "../pages/video/Video.slice";
 
 export const store = configureStore({
   reducer: {
-    video: videoReducer,
+    homeVideo: homeVideoReducer,
     player: playerReducer,
     authentication: authenticationReducer,
-    channel: channelReducer
+    channel: channelReducer,
+    video: videoReducer,
   },
 });
 

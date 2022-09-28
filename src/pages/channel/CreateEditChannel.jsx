@@ -22,8 +22,8 @@ import {
   darktitlecolor,
 } from "../../colors/colors";
 import { styled } from "@mui/material/styles";
-import { updateChannelThunk } from "./Channel.slice";
-import { useDispatch, useSelector} from "react-redux";
+import { createChannelThunk, updateChannelThunk } from "./Channel.slice";
+import { useDispatch, useSelector } from "react-redux";
 
 const Transition = forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -51,21 +51,20 @@ export const DarkTextField = styled(TextField)({
 const CreateEditChannel = ({
   editChannelData,
   openFormDialog,
-  handleCloseFormDialog,
+  handleCloseFormDialog: handleCloseChannelFormDialog,
 }) => {
   const theme = useTheme();
   const mobile = useMediaQuery(theme.breakpoints.down("sm"));
   const dispatch = useDispatch();
-  let link = {
-    title: "",
-    url: "",
-  };
+  const { createChannelStatus } = useSelector((state) => state.channel);
 
-  const [links, setLinks] = useState([link]);
+  const [links, setLinks] = useState([]);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [location, setLocation] = useState("");
   const [description, setDescription] = useState("");
+  const [linkTitle, setLinkTitle] = useState("");
+  const [linkUrl, setLinkUrl] = useState("");
 
   useEffect(() => {
     if (editChannelData) {
@@ -77,8 +76,19 @@ const CreateEditChannel = ({
     }
   }, [editChannelData]);
 
+  useEffect(() => {
+    if (createChannelStatus === "success") {
+      alert("Channel created successfully");
+      handleCloseChannelFormDialog();
+    }
+  }, [createChannelStatus]);
+
   const handleAddMoreLink = () => {
-    setLinks([...links, link]);
+    if (linkTitle.length > 0 && linkUrl.length > 0) {
+      setLinks([...links, { title: linkTitle, url: linkUrl }]);
+    }
+    setLinkTitle("");
+    setLinkUrl("");
   };
 
   const handleOnSubmit = (event) => {
@@ -92,22 +102,31 @@ const CreateEditChannel = ({
       email,
       location,
       description,
+      links,
     };
 
     dispatch(updateChannelThunk(channelData));
-    handleCloseFormDialog();
+    handleCloseChannelFormDialog();
   };
 
   const createChannel = () => {
-    
-  }
+    const channelData = {
+      name,
+      email,
+      location,
+      description,
+      links
+    };
+
+    dispatch(createChannelThunk(channelData));
+  };
 
   return (
     <Box sx={{ display: "flex" }}>
       <Dialog
         fullScreen={mobile ? true : false}
         open={openFormDialog}
-        onClose={handleCloseFormDialog}
+        onClose={handleCloseChannelFormDialog}
         TransitionComponent={Transition}
         sx={{ color: darkbgcolor }}
       >
@@ -117,7 +136,7 @@ const CreateEditChannel = ({
               <IconButton
                 edge="start"
                 color="inherit"
-                onClick={handleCloseFormDialog}
+                onClick={handleCloseChannelFormDialog}
                 aria-label="close"
               >
                 <CloseIcon />
@@ -125,7 +144,11 @@ const CreateEditChannel = ({
               <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
                 {editChannelData ? "Update Channel" : "Create Channel"}
               </Typography>
-              <Button autoFocus color="inherit" onClick={handleCloseFormDialog}>
+              <Button
+                autoFocus
+                color="inherit"
+                onClick={handleCloseChannelFormDialog}
+              >
                 save
               </Button>
             </Toolbar>
@@ -182,6 +205,16 @@ const CreateEditChannel = ({
           />
           {!editChannelData && (
             <>
+              {links.map((link) => (
+                <Box sx={{ mt: 1, mb: 1 }}>
+                  <Typography variant="body2" color="initial">
+                    {link.title}
+                  </Typography>
+                  <Typography variant="body2" color="initial">
+                    {link.url}
+                  </Typography>
+                </Box>
+              ))}
               <Typography
                 variant="body2"
                 component="div"
@@ -197,6 +230,8 @@ const CreateEditChannel = ({
                 type="text"
                 fullWidth
                 size="small"
+                value={linkTitle}
+                onChange={(e) => setLinkTitle(e.target.value)}
               />
               <DarkTextField
                 margin="dense"
@@ -205,8 +240,9 @@ const CreateEditChannel = ({
                 type="url"
                 fullWidth
                 size="small"
+                value={linkUrl}
+                onChange={(e) => setLinkUrl(e.target.value)}
               />
-
               <Button
                 type="submit"
                 onClick={() => handleAddMoreLink()}
@@ -214,7 +250,7 @@ const CreateEditChannel = ({
                 color="primary"
                 sx={{ ml: "auto", fontSize: 11, float: "right" }}
               >
-                Add More
+                Add Link
               </Button>
             </>
           )}
@@ -222,14 +258,15 @@ const CreateEditChannel = ({
         <DialogActions sx={{ bgcolor: darkbgcolor }}>
           <Button
             onClick={() => {
-              setLinks([link]);
-              handleCloseFormDialog();
+              handleCloseChannelFormDialog();
             }}
           >
             Cancel
           </Button>
           <Button
-            onClick={() => editChannelData? updateChannel() : createChannel()}
+            onClick={() =>
+              editChannelData ? updateChannel() : createChannel()
+            }
           >
             {editChannelData ? "Update Channel" : "Create Channel"}
           </Button>

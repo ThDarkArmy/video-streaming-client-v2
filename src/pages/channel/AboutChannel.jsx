@@ -46,7 +46,7 @@ const AboutChannel = ({ channel }) => {
               >
                 Links
               </Typography>
-              {["Facebook", "Twitter", "Instagram", "Gmail"].map(item=><Link to="#" sx={{mr: 2, textDecoration: "none", fontSize: 12, cursor: "pointer"}}>{item}</Link>)}
+              {channel?.links.map(item=><Link key={item.title} to={item.url} sx={{mr: 2, textDecoration: "none", fontSize: 12, cursor: "pointer"}}>{item.title}</Link>)}
             </Box>
           </Box>
         </Grid>

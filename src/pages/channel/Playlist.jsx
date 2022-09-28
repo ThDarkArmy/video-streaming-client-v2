@@ -1,12 +1,15 @@
-import { Box, Typography, Button } from "@mui/material";
+import { Box, Typography, Button, IconButton } from "@mui/material";
 import React from "react";
 import { darktitlecolor } from "../../colors/colors";
 import VideoCard from "../home/VideoCard";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import {useTheme} from "@mui/material/styles";
+import AddVideoIcon from '@mui/icons-material/VideoCall';
 
-const Playlist = ({ videos }) => {
+const Playlist = ({playlist}) => {
   const theme = useTheme()
+
+  const { videos, name } = playlist;
 
   return (
     <Box sx={{ width: "100%", mb: 5 }}>
@@ -23,7 +26,7 @@ const Playlist = ({ videos }) => {
           variant="body1"
           style={{ color: darktitlecolor, fontWeight: 500 }}
         >
-          Dark Playlist{" "}
+         {name}
         </Typography>
         <Button
           disableRipple
@@ -32,6 +35,9 @@ const Playlist = ({ videos }) => {
         >
           Play All
         </Button>
+        <IconButton sx={{ml: 2}} aria-label="Add Video" title="Add Video to playlist" onClick={()=> {}}>
+          <AddVideoIcon sx={{color: darktitlecolor}}/>
+        </IconButton>
       </Box>
       <Box
         display="flex"
@@ -51,7 +57,7 @@ const Playlist = ({ videos }) => {
       >
         {videos.map((video) => (
           <Box key={video._id} sx={{ mr: 2 }}>
-            <VideoCard key={video._id} inChannel={true} videoData={video} />
+            <VideoCard key={video._id} inChannel={true} inPlaylist={true} videoData={video} />
           </Box>
         ))}
       </Box>

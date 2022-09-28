@@ -18,7 +18,7 @@ import {
   darkchannelnamecolor,
 } from "../../colors/colors";
 
-const VideoCard = ({ videoData, inChannel }) => {
+const VideoCard = ({ videoData, inChannel, inPlaylist }) => {
   const [loading, setLoading] = useState(true);
 
   const counter = useRef(0);
@@ -46,8 +46,10 @@ const VideoCard = ({ videoData, inChannel }) => {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  const maxWidth = inPlaylist ? 250 :  550;
   return (
-    <Card sx={{minWidth: 230, maxWidth: 550, paddingRight: 0.4, bgcolor: darkbgcolor, transition: 'transform 200ms', '&:hover':{transform: 'scale(1.03)'} }}>
+    <Card sx={{minWidth: 230, maxWidth: maxWidth, paddingRight: 0.4, bgcolor: darkbgcolor, transition: 'transform 200ms', '&:hover':{transform: 'scale(1.03)'} }}>
       <a style={{ textDecoration: "none" }} href={"/watch?video=" + _id}>
         <CardMedia
           component="img"
